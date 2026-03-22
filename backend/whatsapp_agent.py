@@ -87,9 +87,11 @@ class WhatsAppAgent:
             pyautogui.hotkey("ctrl", "v")
             time.sleep(self.SEARCH_WAIT)
 
-            # Press Enter to open the first search result (the contact)
+            # Press Down Arrow to highlight the first search result, then Enter to open the chat
+            pyautogui.press("down")
+            time.sleep(0.5)
             pyautogui.press("enter")
-            time.sleep(self.MESSAGE_WAIT)
+            time.sleep(1.5)  # Wait for WhatsApp to navigate to the chat and focus message input
 
             # Step 5 — Paste message and send
             # Using clipboard paste avoids any keyboard-layout character mapping issues.
