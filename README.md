@@ -8,7 +8,7 @@
 
 > **A.D.A** = **A**dvanced **D**esign **A**ssistant
 
-ADA V2 is a sophisticated AI assistant designed for multimodal interaction. It combines Google's Gemini 2.5 Native Audio with computer vision, gesture control, and 3D CAD generation in a Electron desktop application.
+ADA V2 is a sophisticated AI assistant designed for multimodal interaction. It combines Google's Gemini 2.5 Native Audio with computer vision, gesture-based mouse control, Windows system automation, and 3D CAD generation in an Electron desktop application.
 
 ---
 
@@ -18,24 +18,62 @@ ADA V2 is a sophisticated AI assistant designed for multimodal interaction. It c
 |---------|-------------|------------|
 | **🗣️ Low-Latency Voice** | Real-time conversation with interrupt handling | Gemini 2.5 Native Audio |
 | **🧊 Parametric CAD** | Editable 3D model generation from voice prompts | `build123d` → STL |
-| **🖨️ 3D Printing** | Slicing and wireless print job submission | OrcaSlicer + Moonraker/OctoPrint |
-| **🖐️ Minority Report UI** | Gesture-controlled window manipulation | MediaPipe Hand Tracking |
-| **👁️ Face Authentication** | Secure local biometric login | MediaPipe Face Landmarker |
-| **🌐 Web Agent** | Autonomous browser automation | Playwright + Chromium |
-| **🏠 Smart Home** | Voice control for TP-Link Kasa devices | `python-kasa` |
+| **🖥️ System Control** | Volume, brightness, Wi-Fi, Bluetooth, apps, screenshots & more | PowerShell + WMI + pycaw |
+| **💬 WhatsApp Messaging** | Send WhatsApp messages hands-free via voice | pyautogui + pyperclip |
+| **🖐️ Hand Gesture Mouse** | Control your cursor and click using hand gestures | MediaPipe Hand Tracking |
+| **🌐 Web Agent** | Autonomous browser automation & search | Playwright + Chromium |
 | **📁 Project Memory** | Persistent context across sessions | File-based JSON storage |
 
-### 🖐️ Gesture Control Details
+---
 
-ADA's "Minority Report" interface uses your webcam to detect hand gestures:
+### 🖥️ System Control Details
+
+ADA can control your Windows system entirely through voice commands:
+
+| Category | Commands |
+|----------|----------|
+| **Volume** | Set volume %, mute/unmute, step up/down |
+| **Brightness** | Set brightness %, step up/down |
+| **Wi-Fi** | Turn Wi-Fi on/off, check connection status |
+| **Bluetooth** | Turn Bluetooth on/off |
+| **Applications** | Open any app by name, close running apps |
+| **Power** | Lock, sleep, shutdown, restart, hibernate |
+| **System Info** | Battery %, CPU/RAM usage, storage, IP address |
+| **Utilities** | Take screenshot, open folders, Google Search, clipboard management |
+| **Browser Search** | Instantly search Google from a voice prompt |
+
+---
+
+### 💬 WhatsApp Messaging Details
+
+ADA can send WhatsApp messages using your installed Windows WhatsApp desktop app — no browser scraping, no web API:
+
+- **Voice-driven**: Just say "Send a WhatsApp message to [Name] saying [Message]"
+- **Confirmation step**: ADA asks you to confirm before sending
+- **Clipboard-based input**: Avoids keyboard layout issues by pasting text directly
+- **Auto-launch**: Starts WhatsApp automatically if it's not already open
+
+---
+
+### 🖐️ Hand Gesture Mouse Control Details
+
+ADA's "Minority Report" interface turns your webcam into a hands-free mouse — no physical mouse needed:
 
 | Gesture | Action |
 |---------|--------|
-| 🤏 **Pinch** | Confirm action / click |
-| ✋ **Open Palm** | Release the window |
-| ✊ **Close Fist** | "Select" and grab a UI window to drag it |
+| ☝️ **Point** | Move the cursor — index fingertip maps to screen position |
+| 🤏 **Pinch** | Click — bring index finger and thumb together |
+| ✊ **Close Fist** | Grab and drag a UI window |
+| ✋ **Open Palm** | Release a dragged window |
 
-> **Tip**: Enable the video feed window to see the hand tracking overlay.
+**Additional details:**
+- Smooth cursor movement via lerp interpolation (0.2 factor)
+- Snap-to-button: cursor magnetically snaps to nearby buttons/inputs within 50px
+- Adjustable sensitivity (default 2×) and optional camera flip in Settings
+- Cyan hand skeleton overlay drawn on the video feed for visual feedback
+- Enable/disable via voice command: *"Turn on hand gesture control"*
+
+> **Tip**: Enable the video feed window to see the hand tracking skeleton overlay.
 
 ---
 
@@ -46,7 +84,7 @@ graph TB
     subgraph Frontend ["Frontend (Electron + React)"]
         UI[React UI]
         THREE[Three.js 3D Viewer]
-        GESTURE[MediaPipe Gestures]
+        GESTURE[MediaPipe Hand Gesture Mouse]
         SOCKET_C[Socket.IO Client]
     end
     
@@ -55,9 +93,8 @@ graph TB
         ADA[ada.py<br/>Gemini Live API]
         WEB[web_agent.py<br/>Playwright Browser]
         CAD[cad_agent.py<br/>CAD + build123d]
-        PRINTER[printer_agent.py<br/>3D Printing + OrcaSlicer]
-        KASA[kasa_agent.py<br/>Smart Home]
-        AUTH[authenticator.py<br/>MediaPipe Face Auth]
+        SYS[system_agent.py<br/>Windows System Control]
+        WA[whatsapp_agent.py<br/>WhatsApp Messaging]
         PM[project_manager.py<br/>Project Context]
     end
     
@@ -66,12 +103,10 @@ graph TB
     SERVER --> ADA
     ADA --> WEB
     ADA --> CAD
-    ADA --> KASA
-    SERVER --> AUTH
+    ADA --> SYS
+    ADA --> WA
     SERVER --> PM
-    SERVER --> PRINTER
     CAD -->|STL file| THREE
-    CAD -->|STL file| PRINTER
 ```
 
 ---
@@ -177,14 +212,6 @@ node --version  # Should show v18.x or higher
 npm install
 ```
 
-### 4. 🔐 Face Authentication Setup
-To use the secure voice features, ADA needs to know what you look like.
-
-1. Take a clear photo of your face (or use an existing one).
-2. Rename the file to `reference.jpg`.
-3. Drag and drop this file into the `ada_v2/backend` folder.
-4. (Optional) You can toggle this feature on/off in `settings.json` by changing `"face_auth_enabled": true/false`.
-
 ---
 
 ## ⚙️ Configuration (`settings.json`)
@@ -193,7 +220,6 @@ The system creates a `settings.json` file on first run. You can modify this to c
 
 | Key | Type | Description |
 | :--- | :--- | :--- |
-| `face_auth_enabled` | `bool` | If `true`, blocks all AI interaction until your face is recognized via the camera. |
 | `tool_permissions` | `obj` | Controls manual approval for specific tools. |
 | `tool_permissions.generate_cad` | `bool` | If `true`, requires you to click "Confirm" on the UI before generating CAD. |
 | `tool_permissions.run_web_agent` | `bool` | If `true`, requires confirmation before opening the browser agent. |
@@ -201,29 +227,7 @@ The system creates a `settings.json` file on first run. You can modify this to c
 
 ---
 
-### 5. 🖨️ 3D Printer Setup
-ADA V2 can slice STL files and send them directly to your 3D printer.
-
-**Supported Hardware:**
-- **Klipper/Moonraker** (Creality K1, Voron, etc.)
-- **OctoPrint** instances
-- **PrusaLink** (Experimental)
-
-**Step 1: Install Slicer**
-ADA uses **OrcaSlicer** (recommended) or PrusaSlicer to generate G-code.
-1. Download and install [OrcaSlicer](https://github.com/SoftFever/OrcaSlicer).
-2. Run it once to ensure profiles are created.
-3. ADA automatically detects the installation path.
-
-**Step 2: Connect Printer**
-1. Ensure your printer and computer are on the **same Wi-Fi network**.
-2. Open the **Printer Window** in ADA (Cube icon).
-3. ADA automatically scans for printers using mDNS.
-4. **Manual Connection**: If your printer isn't found, use the "Add Printer" button and enter the IP address (e.g., `192.168.1.50`).
-
----
-
-### 6. 🔑 Gemini API Key Setup
+### 4. 🔑 Gemini API Key Setup
 ADA uses Google's Gemini API for voice and intelligence. You need a free API key.
 
 1. Go to [Google AI Studio](https://aistudio.google.com/app/apikey).
@@ -274,10 +278,11 @@ npm run dev
 ## ✅ First Flight Checklist (Things to Test)
 
 1. **Voice Check**: Say "Hello Ada". She should respond.
-2. **Vision Check**: Look at the camera. If Face Auth is on, the lock screen should unlock.
-3. **CAD Check**: Open the CAD window and say "Create a cube". Watch the logs.
-4. **Web Check**: Open the Browser window and say "Go to Google".
-5. **Smart Home**: If you have Kasa devices, say "Turn on the lights".
+2. **Gesture Check**: Enable the camera, raise your hand, and move your index finger — the cursor should follow.
+3. **System Control**: Say "Set volume to 50%" or "Turn on Bluetooth".
+4. **WhatsApp**: Say "Send a WhatsApp message to [Contact] saying [Message]".
+5. **CAD Check**: Open the CAD window and say "Create a cube". Watch the logs.
+6. **Web Check**: Open the Browser window and say "Search for the latest AI news".
 
 ---
 
@@ -286,9 +291,26 @@ npm run dev
 ### 🗣️ Voice Commands
 - "Switch project to [Name]"
 - "Create a new project called [Name]"
-- "Turn on the [Room] light"
-- "Make the light [Color]"
 - "Pause audio" / "Stop audio"
+- "Turn on hand gesture control"
+- "Turn off the camera"
+
+### 🖥️ System Control
+- "Set volume to 40%"
+- "Mute / Unmute"
+- "Set brightness to 70%"
+- "Turn on / off Wi-Fi"
+- "Turn on / off Bluetooth"
+- "Open [App Name]" / "Close [App Name]"
+- "Lock the computer" / "Shut down" / "Restart" / "Sleep"
+- "Take a screenshot"
+- "What's my battery level?" / "How much RAM am I using?"
+- "Search Google for [query]"
+- "Copy [text] to clipboard"
+
+### 💬 WhatsApp
+- **Send**: "Send a WhatsApp message to [Contact Name] saying [Message]"
+- ADA will confirm the message before sending.
 
 ### 🧊 3D CAD
 - **Prompt**: "Create a 3D model of a hex bolt."
@@ -298,11 +320,6 @@ npm run dev
 ### 🌐 Web Agent
 - **Prompt**: "Go to Amazon and find a USB-C cable under $10."
 - **Note**: The agent will auto-scroll, click, and type. Do not interfere with the browser window while it runs.
-
-### 🖨️ Printing & Slicing
-- **Auto-Discovery**: ADA automatically finds printers on your network.
-- **Slicing**: Click "Slice & Print" on any generated 3D model.
-- **Profiles**: ADA intelligently selects the correct OrcaSlicer profile based on your printer's name (e.g., "Creality K1").
 
 ---
 
@@ -336,6 +353,16 @@ This is a server-side issue from the Gemini API. Simply reconnect by clicking th
 
 ---
 
+### System control commands not working (Windows)
+**Symptoms**: Brightness or Bluetooth commands fail.
+
+**Solution**:
+1. Run the app (or the backend terminal) **as Administrator** for WMI brightness control.
+2. Ensure your monitor supports WMI brightness control (most laptop displays do; external monitors may not).
+3. For Bluetooth, confirm Windows Bluetooth service is enabled in **Device Manager**.
+
+---
+
 ## 📸 What It Looks Like
 
 *Coming soon! Screenshots and demo videos will be added here.*
@@ -349,17 +376,15 @@ ada_v2/
 ├── backend/                    # Python server & AI logic
 │   ├── ada.py                  # Gemini Live API integration
 │   ├── server.py               # FastAPI + Socket.IO server
+│   ├── system_agent.py         # Windows system control (volume, brightness, Wi-Fi, apps, etc.)
+│   ├── whatsapp_agent.py       # WhatsApp desktop automation
 │   ├── cad_agent.py            # CAD generation orchestrator
-│   ├── printer_agent.py        # 3D printer discovery & slicing
 │   ├── web_agent.py            # Playwright browser automation
-│   ├── kasa_agent.py           # TP-Link smart home control
-│   ├── authenticator.py        # MediaPipe face auth logic
 │   ├── project_manager.py      # Project context management
-│   ├── tools.py                # Tool definitions for Gemini
-│   └── reference.jpg           # Your face photo (add this!)
+│   └── tools.py                # Tool definitions for Gemini
 ├── src/                        # React frontend
-│   ├── App.jsx                 # Main application component
-│   ├── components/             # UI components (11 files)
+│   ├── App.jsx                 # Main application + hand gesture mouse control
+│   ├── components/             # UI components
 │   └── index.css               # Global styles
 ├── electron/                   # Electron main process
 │   └── main.js                 # Window & IPC setup
@@ -376,11 +401,12 @@ ada_v2/
 
 | Limitation | Details |
 |------------|---------|
-| **macOS & Windows** | Tested on macOS 14+ and Windows 10/11. Linux is untested. |
-| **Camera Required** | Face auth and gesture control need a working webcam. |
+| **Windows-first** | System control, WhatsApp automation, and several utilities use Windows-specific APIs. Linux/macOS support is partial. |
+| **Camera Required** | Hand gesture mouse control needs a working webcam. |
 | **Gemini API Quota** | Free tier has rate limits; heavy CAD iteration may hit limits. |
 | **Network Dependency** | Requires internet for Gemini API (no offline mode). |
-| **Single User** | Face auth recognizes one person (the `reference.jpg`). |
+| **WhatsApp Desktop** | WhatsApp messaging requires the Windows WhatsApp desktop app to be installed. |
+| **Brightness Control** | WMI brightness adjustment works on most laptops but may not work on external monitors. |
 
 ---
 
@@ -407,12 +433,12 @@ Contributions are welcome! Here's how:
 | Aspect | Implementation |
 |--------|----------------|
 | **API Keys** | Stored in `.env`, never committed to Git. |
-| **Face Data** | Processed locally, never uploaded. |
 | **Tool Confirmations** | Write/CAD/Web actions can require user approval. |
+| **System Control** | One-time session authorization dialog shown on startup. |
 | **No Cloud Storage** | All project data stays on your machine. |
 
 > [!WARNING]
-> Never share your `.env` file or `reference.jpg`. These contain sensitive credentials and biometric data.
+> Never share your `.env` file. It contains your Gemini API key.
 
 ---
 
@@ -420,7 +446,7 @@ Contributions are welcome! Here's how:
 
 - **[Google Gemini](https://deepmind.google/technologies/gemini/)** — Native Audio API for real-time voice
 - **[build123d](https://github.com/gumyr/build123d)** — Modern parametric CAD library
-- **[MediaPipe](https://developers.google.com/mediapipe)** — Hand tracking, gesture recognition, and face authentication
+- **[MediaPipe](https://developers.google.com/mediapipe)** — Hand tracking and gesture recognition
 - **[Playwright](https://playwright.dev/)** — Reliable browser automation
 
 ---
@@ -433,5 +459,5 @@ This project is licensed under the **MIT License** — see the [LICENSE](LICENSE
 
 <p align="center">
   <strong>Built with 🤖 by Nazir Louis</strong><br>
-  <em>Bridging AI, CAD, and Vision in a Single Interface</em>
+  <em>Bridging AI, Automation, and Gesture Control in a Single Interface</em>
 </p>
