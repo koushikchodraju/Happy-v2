@@ -1,0 +1,19 @@
+fastapi
+uvicorn
+python-socketio
+python-multipart
+# Google GenAI SDK (v1beta)
+google-genai
+# Computer Vision & Audio
+opencv-python
+pyaudio
+pillow
+mss
+# Browser Automation
+playwright
+# Utilities
+python-dotenv
+# Hand tracking (gesture control UI)
+mediapipe
+# CAD Generation
+build123d
