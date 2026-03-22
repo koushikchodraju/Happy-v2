@@ -6,9 +6,8 @@
 ![Gemini](https://img.shields.io/badge/Google%20Gemini-Native%20Audio-4285F4?logo=google)
 ![License](https://img.shields.io/badge/License-MIT-green)
 
-> **A.D.A** = **A**dvanced **D**esign **A**ssistant
 
-ADA V2 is a sophisticated AI assistant designed for multimodal interaction. It combines Google's Gemini 2.5 Native Audio with computer vision, gesture-based mouse control, Windows system automation, and 3D CAD generation in an Electron desktop application.
+Happy V2 is a sophisticated AI assistant designed for multimodal interaction. It combines Google's Gemini 2.5 Native Audio with computer vision, gesture-based mouse control, Windows system automation, and 3D CAD generation in an Electron desktop application.
 
 ---
 
@@ -28,7 +27,7 @@ ADA V2 is a sophisticated AI assistant designed for multimodal interaction. It c
 
 ### 🖥️ System Control Details
 
-ADA can control your Windows system entirely through voice commands:
+HAPPY can control your Windows system entirely through voice commands:
 
 | Category | Commands |
 |----------|----------|
@@ -46,10 +45,10 @@ ADA can control your Windows system entirely through voice commands:
 
 ### 💬 WhatsApp Messaging Details
 
-ADA can send WhatsApp messages using your installed Windows WhatsApp desktop app — no browser scraping, no web API:
+HAPPY can send WhatsApp messages using your installed Windows WhatsApp desktop app — no browser scraping, no web API:
 
 - **Voice-driven**: Just say "Send a WhatsApp message to [Name] saying [Message]"
-- **Confirmation step**: ADA asks you to confirm before sending
+- **Confirmation step**: HAPPY asks you to confirm before sending
 - **Clipboard-based input**: Avoids keyboard layout issues by pasting text directly
 - **Auto-launch**: Starts WhatsApp automatically if it's not already open
 
@@ -57,7 +56,7 @@ ADA can send WhatsApp messages using your installed Windows WhatsApp desktop app
 
 ### 🖐️ Hand Gesture Mouse Control Details
 
-ADA's "Minority Report" interface turns your webcam into a hands-free mouse — no physical mouse needed:
+HAPPY's "Minority Report" interface turns your webcam into a hands-free mouse — no physical mouse needed:
 
 | Gesture | Action |
 |---------|--------|
@@ -90,7 +89,7 @@ graph TB
     
     subgraph Backend ["Backend (Python 3.11 + FastAPI)"]
         SERVER[server.py<br/>Socket.IO Server]
-        ADA[ada.py<br/>Gemini Live API]
+        HAPPY[ada.py<br/>Gemini Live API]
         WEB[web_agent.py<br/>Playwright Browser]
         CAD[cad_agent.py<br/>CAD + build123d]
         SYS[system_agent.py<br/>Windows System Control]
@@ -100,11 +99,11 @@ graph TB
     
     UI --> SOCKET_C
     SOCKET_C <--> SERVER
-    SERVER --> ADA
-    ADA --> WEB
-    ADA --> CAD
-    ADA --> SYS
-    ADA --> WA
+    SERVER --> HAPPY
+    HAPPY --> WEB
+    HAPPY --> CAD
+    HAPPY --> SYS
+    HAPPY --> WA
     SERVER --> PM
     CAD -->|STL file| THREE
 ```
@@ -118,10 +117,10 @@ graph TB
 
 ```bash
 # 1. Clone and enter
-git clone https://github.com/nazirlouis/ada_v2.git && cd ada_v2
+git clone https://github.com/nazirlouis/happy_v2.git && cd happy_v2
 
 # 2. Create Python environment (Python 3.11)
-conda create -n ada_v2 python=3.11 -y && conda activate ada_v2
+conda create -n happy_v2 python=3.11 -y && conda activate happy_v2
 brew install portaudio  # macOS only (for PyAudio)
 pip install -r requirements.txt
 playwright install chromium
@@ -133,7 +132,7 @@ npm install
 echo "GEMINI_API_KEY=your_key_here" > .env
 
 # 5. Run!
-conda activate ada_v2 && npm run dev
+conda activate happy_v2 && npm run dev
 ```
 
 </details>
@@ -161,14 +160,14 @@ If you have never coded before, follow these steps first!
 1. Open your terminal (or Command Prompt on Windows).
 2. Type this command and hit Enter:
    ```bash
-   git clone https://github.com/nazirlouis/ada_v2.git
+   git clone https://github.com/nazirlouis/happy_v2.git
    ```
-3. This creates a folder named `ada_v2`.
+3. This creates a folder named `happy_v2`.
 
 **Step 5: Open in VS Code**
 1. Open VS Code.
 2. Go to **File > Open Folder**.
-3. Select the `ada_v2` folder you just downloaded.
+3. Select the `happy_v2` folder you just downloaded.
 4. Open the internal terminal: Press `Ctrl + ~` (tilde) or go to **Terminal > New Terminal**.
 
 ---
@@ -191,8 +190,8 @@ brew install portaudio
 Create a single Python 3.11 environment:
 
 ```bash
-conda create -n ada_v2 python=3.11
-conda activate ada_v2
+conda create -n happy_v2 python=3.11
+conda activate happy_v2
 
 # Install all dependencies
 pip install -r requirements.txt
@@ -228,12 +227,12 @@ The system creates a `settings.json` file on first run. You can modify this to c
 ---
 
 ### 4. 🔑 Gemini API Key Setup
-ADA uses Google's Gemini API for voice and intelligence. You need a free API key.
+HAPPY uses Google's Gemini API for voice and intelligence. You need a free API key.
 
 1. Go to [Google AI Studio](https://aistudio.google.com/app/apikey).
 2. Sign in with your Google account.
 3. Click **"Create API Key"** and copy the generated key.
-4. Create a file named `.env` in the `ada_v2` folder (same level as `README.md`).
+4. Create a file named `.env` in the `happy_v2` folder (same level as `README.md`).
 5. Add this line to the file:
    ```
    GEMINI_API_KEY=your_api_key_here
@@ -244,14 +243,14 @@ ADA uses Google's Gemini API for voice and intelligence. You need a free API key
 
 ---
 
-## 🚀 Running ADA V2
+## 🚀 Running HAPPY V2
 
-You have two options to run the app. Ensure your `ada_v2` environment is active!
+You have two options to run the app. Ensure your `happy_v2` conda environment is active!
 
 ### Option 1: The "Easy" Way (Single Terminal)
 The app is smart enough to start the backend for you.
-1. Open your terminal in the `ada_v2` folder.
-2. Activate your environment: `conda activate ada_v2`
+1. Open your terminal in the `happy_v2` folder.
+2. Activate your environment: `conda activate happy_v2`
 3. Run:
    ```bash
    npm run dev
@@ -263,7 +262,7 @@ Use this if you want to see the Python logs (recommended for debugging).
 
 **Terminal 1 (Backend):**
 ```bash
-conda activate ada_v2
+conda activate happy_v2
 python backend/server.py
 ```
 
@@ -277,7 +276,7 @@ npm run dev
 
 ## ✅ First Flight Checklist (Things to Test)
 
-1. **Voice Check**: Say "Hello Ada". She should respond.
+1. **Voice Check**: Say "Hello Happy". She should respond.
 2. **Gesture Check**: Enable the camera, raise your hand, and move your index finger — the cursor should follow.
 3. **System Control**: Say "Set volume to 50%" or "Turn on Bluetooth".
 4. **WhatsApp**: Say "Send a WhatsApp message to [Contact] saying [Message]".
@@ -310,7 +309,7 @@ npm run dev
 
 ### 💬 WhatsApp
 - **Send**: "Send a WhatsApp message to [Contact Name] saying [Message]"
-- ADA will confirm the message before sending.
+- HAPPY will confirm the message before sending.
 
 ### 🧊 3D CAD
 - **Prompt**: "Create a 3D model of a hex bolt."
@@ -339,7 +338,7 @@ npm run dev
 **Symptoms**: Backend crashes on startup with "API key not found".
 
 **Solution**:
-1. Make sure your `.env` file is in the root `ada_v2` folder (not inside `backend/`).
+1. Make sure your `.env` file is in the root `happy_v2` folder (not inside `backend/`).
 2. Verify the format is exactly: `GEMINI_API_KEY=your_key` (no quotes, no spaces).
 3. Restart the backend after editing the file.
 
@@ -349,7 +348,7 @@ npm run dev
 **Symptoms**: `websockets.exceptions.ConnectionClosedError: 1011 (internal error)`.
 
 **Solution**:
-This is a server-side issue from the Gemini API. Simply reconnect by clicking the connect button or saying "Hello Ada" again. If it persists, check your internet connection or try again later.
+This is a server-side issue from the Gemini API. Simply reconnect by clicking the connect button or saying "Hello Happy" again. If it persists, check your internet connection or try again later.
 
 ---
 
@@ -372,7 +371,7 @@ This is a server-side issue from the Gemini API. Simply reconnect by clicking th
 ## 📂 Project Structure
 
 ```
-ada_v2/
+happy_v2/
 ├── backend/                    # Python server & AI logic
 │   ├── ada.py                  # Gemini Live API integration
 │   ├── server.py               # FastAPI + Socket.IO server
