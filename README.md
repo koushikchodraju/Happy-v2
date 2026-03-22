@@ -12,7 +12,7 @@ Happy V2 is a sophisticated AI assistant designed for multimodal interaction. It
 ---
 ## 🎬 Demo
 
-[![Watch Demo](https://img.youtube.com/vi/dQw4w9WgXcQ/0.jpg)](./Demo-Happy.mp4)
+[![Watch Demo](https://www.gettyimages.com.au/videos/video-play-button-white)](./Demo-Happy.mp4)
 ---
 ---
 ## 🌟 Capabilities at a Glance
