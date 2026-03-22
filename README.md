@@ -10,7 +10,7 @@
 Happy V2 is a sophisticated AI assistant designed for multimodal interaction. It combines Google's Gemini 2.5 Native Audio with computer vision, gesture-based mouse control, Windows system automation, and 3D CAD generation in an Electron desktop application.
 
 ---
-## 🎬 Demo
+## 🎬 Demo Video
 
 [![Watch Demo](https://i9.ytimg.com/vi_webp/9ZFvHxYT-wE/mq3.webp?sqp=CMCz_80G-oaymwEmCMACELQB8quKqQMa8AEB-AH-CYACzgWKAgwIABABGGUgZShlMA8=&rs=AOn4CLDVXxvU2vsqfIVj978b_FgKIVStnQ)](https://youtu.be/9ZFvHxYT-wE)
 ---
